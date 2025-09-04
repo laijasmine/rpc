@@ -5,6 +5,11 @@ Authors@R:
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
+Imports:
+    lubridate
+    jsonlite
+    readr
+    httr2
 Suggests: 
     testthat (>= 3.0.0)
     lubridate
