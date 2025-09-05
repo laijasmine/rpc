@@ -1,26 +1,25 @@
-#' @import lubridate
 
-# @param start_date description
-# @return data.frame containing start_date, end_date, exclusions
-# @export
+
+#' create_class
+#'
+#' @param start_date (chr) in the format of YYYY-MM-DD
+#' @param sessions (int) number of sessions
+#'
+#' @returns data.frame containing start_date, end_date, exclusions
+#'
+#' @examples
+#' @export
 create_class <- function(start_date, sessions = 9) {
   start_date <- as.Date(start_date)
   sessions   <- sessions - 1
   classes <- start_date + weeks(1:sessions)
-
-  holiday_year <- year(.holidays) |> unique()
-
-  # TODO how to update only once
-  if (year(start_date) != holiday_year) {
-    get_holidays(year(start_date))
-  }
 
   overlap_dates <- NA
   if (any(.holidays %in% classes)) {
     overlap_dates <- .holidays[.holidays %in% classes]
     additional_classes <- sessions + length(overlap_dates)
     classes <- start_date + weeks(1:additional_classes)
-    overlap_dates <- list(overlap_dates)
+    overlap_dates <- glue_collapse(overlap_dates, sep = ", ")
   }
 
   tibble::tibble(
@@ -29,6 +28,12 @@ create_class <- function(start_date, sessions = 9) {
     exclusions = overlap_dates)
 }
 
+#' get_instructors
+#'
+#' @returns data.frame
+#'
+#' @export
+#' @examples
 get_instructors <- function() {
   # read sheet
   # googlesheets4::gs4_auth()
@@ -36,6 +41,14 @@ get_instructors <- function() {
   googlesheets4::read_sheet(ssid)
 }
 
+#' get_class_schedule
+#'
+#' @param instructor (chr) name of instructor
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 get_class_schedule <- function(instructor = NULL) {
   instructor_schedule <- get_instructors()
   new_schedule <- lapply(instructor_schedule$start_date, create_class) |> 

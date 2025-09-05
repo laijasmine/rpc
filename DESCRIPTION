@@ -6,9 +6,11 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Imports:
-    jsonlite,
-    readr,
-    lubridate
+    lubridate,
+    glue,
+    googlesheets4,
+    tibble,
+    dplyr
 Suggests: 
     testthat (>= 3.0.0),
     httr2
