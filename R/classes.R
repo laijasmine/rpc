@@ -2,13 +2,15 @@
 
 # @param start_date description
 # @return data.frame containing start_date, end_date, exclusions
-create_class <- function(start_date, sessions) {
+# @export
+create_class <- function(start_date, sessions = 9) {
   start_date <- as.Date(start_date)
   sessions   <- sessions - 1
   classes <- start_date + weeks(1:sessions)
 
   holiday_year <- year(.holidays) |> unique()
 
+  # TODO how to update only once
   if (year(start_date) != holiday_year) {
     get_holidays(year(start_date))
   }
@@ -27,14 +29,20 @@ create_class <- function(start_date, sessions) {
     exclusions = overlap_dates)
 }
 
-get_instructors <- function(sheet) {
+get_instructors <- function() {
   # read sheet
-
+  # googlesheets4::gs4_auth()
+  ssid <- googlesheets4::as_sheets_id("https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g")
+  googlesheets4::read_sheet(ssid)
 }
 
 get_class_schedule <- function(instructor = NULL) {
-  create_class()
-  get_instructors()
+  instructor_schedule <- get_instructors()
+  new_schedule <- lapply(instructor_schedule$start_date, create_class) |> 
+    dplyr::bind_rows()
+
+  dplyr::bind_cols(instructor_schedule, new_schedule, )
+  
 }
 
 create_contract <- function(instructor) {

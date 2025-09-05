@@ -1,5 +1,4 @@
 
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # rpc
@@ -9,7 +8,7 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/rpc.png)](https://CRAN.R-project.org/package=rpc)
+status](https://www.r-pkg.org/badges/version/rpc)](https://CRAN.R-project.org/package=rpc)
 <!-- badges: end -->
 
 The goal of rpc is to …
@@ -24,13 +23,10 @@ You can install the development version of rpc from
 pak::pak("laijasmine/rpc")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+## Update Class Information Example
 
 ``` r
-#library(rpc)
-## basic example code
+#rpc::create_class("2025-09-15", 9)
 ```
 
 What is special about using `README.Rmd` instead of just `README.md`?
@@ -49,10 +45,3 @@ summary(cars)
 
 You’ll still need to render `README.Rmd` regularly, to keep `README.md`
 up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" style="width:100.0%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
