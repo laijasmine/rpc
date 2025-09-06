@@ -39,7 +39,6 @@ create_class <- function(start_date, sessions, biweekly = FALSE) {
 #' @export
 #' @examples
 get_instructors <- function() {
-  # read sheet
   # googlesheets4::gs4_auth()
   ssid <- googlesheets4::as_sheets_id("https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g")
   googlesheets4::read_sheet(ssid, col_types = "ccccddD")
@@ -69,33 +68,9 @@ get_class_schedule <- function(instructor = NULL) {
     select(-biweekly)
 }
 
-create_contract <- function(instructor) {
+pick_up_date <- function(last_class) {
+  sat <- last_class + (7 - wday(last_class)) + weeks(2)
+
+  c(sat, (sat + days()))
 }
 
-create_instructor_package <- function(season) {
-  create_contract()
-  get_class_schedule()
-}
-
-create_city_document <- function(season) {
-  get_class_schedule()
-  create_contract()
-
-  get_class_schedule() |> 
-    filter(class_type == "public")
-}
-
-create_member_class <- function () {
-  get_class_schedule() |> 
-    filter(class_type == "member") |> 
-    select(-class_type)
-
-}
-
-pick_up_date <- function() {
-  last_class <- get_class_schedule() |> 
-    dplyr::pull(end_date) |> 
-    max()
-  
-  last_class + week(1)
-}

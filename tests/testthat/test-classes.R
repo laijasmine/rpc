@@ -24,3 +24,8 @@ test_that("class dates correct", {
   expect_equal(member_fri$exclusions, NA)
 })
 
+test_that("pick up date is correct", {
+  expect_equal(pick_up_date(as.Date("2025-11-17")), 
+  c(as.Date("2025-12-06"), as.Date("2025-12-07")))
+})
+
