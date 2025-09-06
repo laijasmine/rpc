@@ -9,6 +9,12 @@ get_class_schedule(instructor = NULL)
 \arguments{
 \item{instructor}{(chr) name of instructor}
 }
+\value{
+tibble
+}
 \description{
 get_class_schedule
+}
+\examples{
+get_class_schedule("David Liu")
 }

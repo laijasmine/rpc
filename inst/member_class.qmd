@@ -1,0 +1,21 @@
+```{r constants}
+#library(rpc)
+#library(kable)
+library(dplyr)
+```
+
+Come join a Pottery Class for Members Only! Whether you’re learning to master the basics or have extensive experience with clay, this course will help you refine your skills and bring your artistic vision to life.
+
+In a supportive and inspiring environment, you'll get instructor guidance tailored to your goals. Learn more advanced techniques, troubleshoot your projects, and gain the confidence to make exactly what you’ve always wanted.
+
+{registration info}
+
+** If possible, we ask our  non-working members to take the Monday daytime class. This would allow us to offer maximum space in the Friday evening class for our working members. **
+
+```{r}
+get_class_schedule() |> 
+    filter(class_type == "member") |> 
+    select(-class_type)
+```
+
+Course fee will be collected on the first night (cash, bank card or credit card).*** Participants must supply their own tools, recycling bucket and clay.  Any questions? Contact Brenda at Teacherb@shaw.ca

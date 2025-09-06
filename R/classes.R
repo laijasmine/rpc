@@ -1,18 +1,23 @@
-
-
 #' create_class
+#' Given a start date create class schedule
 #'
 #' @param start_date (chr) in the format of YYYY-MM-DD
 #' @param sessions (int) number of sessions
+#' @param biweekly (bool) weekly or bi-weekly classes Default = FALSE
 #'
-#' @returns data.frame containing start_date, end_date, exclusions
+#' @returns tibble containing start_date, end_date, exclusions
 #'
 #' @examples
 #' @export
-create_class <- function(start_date, sessions = 9) {
-  start_date <- as.Date(start_date)
-  sessions   <- sessions - 1
-  classes <- start_date + weeks(1:sessions)
+create_class <- function(start_date, sessions, biweekly = FALSE) {
+  start_date     <- as.Date(start_date)
+  sessions       <- sessions - 1 # not including start date
+  class_interval <- weeks(1:sessions)
+  if (biweekly) {
+    class_interval <- class_interval * 2
+  }
+
+  classes <- start_date + class_interval
 
   overlap_dates <- NA
   if (any(.holidays %in% classes)) {
@@ -23,7 +28,6 @@ create_class <- function(start_date, sessions = 9) {
   }
 
   tibble::tibble(
-    start_date = start_date,
     end_date   = classes[length(classes)],
     exclusions = overlap_dates)
 }
@@ -38,28 +42,34 @@ get_instructors <- function() {
   # read sheet
   # googlesheets4::gs4_auth()
   ssid <- googlesheets4::as_sheets_id("https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g")
-  googlesheets4::read_sheet(ssid)
+  googlesheets4::read_sheet(ssid, col_types = "ccccddD")
 }
 
 #' get_class_schedule
 #'
 #' @param instructor (chr) name of instructor
 #'
-#' @returns
+#' @returns tibble
 #'
 #' @export
-#' @examples
+#' @examples get_class_schedule("David Liu")
 get_class_schedule <- function(instructor = NULL) {
   instructor_schedule <- get_instructors()
-  new_schedule <- lapply(instructor_schedule$start_date, create_class) |> 
-    dplyr::bind_rows()
 
-  dplyr::bind_cols(instructor_schedule, new_schedule, )
-  
+  if (!is.null(instructor)) {
+    instructor_schedule <- instructor_schedule |> 
+      dplyr::filter(instructor == {{ instructor }})
+  }
+
+  instructor_schedule |> 
+    dplyr::mutate(biweekly = ifelse(class_type == "member", TRUE, FALSE)) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(class = create_class(start_date, sessions, biweekly)) |> 
+    tidyr::unnest(class) |> 
+    select(-biweekly)
 }
 
 create_contract <- function(instructor) {
-  
 }
 
 create_instructor_package <- function(season) {
@@ -68,6 +78,24 @@ create_instructor_package <- function(season) {
 }
 
 create_city_document <- function(season) {
-  create_contract()
   get_class_schedule()
+  create_contract()
+
+  get_class_schedule() |> 
+    filter(class_type == "public")
+}
+
+create_member_class <- function () {
+  get_class_schedule() |> 
+    filter(class_type == "member") |> 
+    select(-class_type)
+
+}
+
+pick_up_date <- function() {
+  last_class <- get_class_schedule() |> 
+    dplyr::pull(end_date) |> 
+    max()
+  
+  last_class + week(1)
 }

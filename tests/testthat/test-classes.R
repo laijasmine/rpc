@@ -14,5 +14,13 @@ test_that("class dates correct", {
   saturday <- create_class("2025-09-20", 9)
   expect_equal(saturday$end_date, as.Date("2025-11-15"))
   expect_equal(saturday$exclusions, NA)
+
+  member_mon <- create_class("2025-09-22", 6, TRUE)
+  expect_equal(member_mon$end_date, as.Date("2025-12-01"))
+  expect_equal(member_mon$exclusions, NA)
+
+  member_fri <- create_class("2025-09-19", 6, TRUE)
+  expect_equal(member_fri$end_date, as.Date("2025-11-28"))
+  expect_equal(member_fri$exclusions, NA)
 })
 

@@ -2,18 +2,22 @@
 % Please edit documentation in R/classes.R
 \name{create_class}
 \alias{create_class}
-\title{create_class}
+\title{create_class
+Given a start date create class schedule}
 \usage{
-create_class(start_date, sessions = 9)
+create_class(start_date, sessions, biweekly = FALSE)
 }
 \arguments{
 \item{start_date}{(chr) in the format of YYYY-MM-DD}
 
 \item{sessions}{(int) number of sessions}
+
+\item{biweekly}{(bool) weekly or bi-weekly classes Default = FALSE}
 }
 \value{
-data.frame containing start_date, end_date, exclusions
+tibble containing start_date, end_date, exclusions
 }
 \description{
 create_class
+Given a start date create class schedule
 }

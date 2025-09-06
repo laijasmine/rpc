@@ -10,7 +10,9 @@ Imports:
     glue,
     googlesheets4,
     tibble,
-    dplyr
+    dplyr,
+    purrr,
+    tidyr
 Suggests: 
     testthat (>= 3.0.0),
     httr2
