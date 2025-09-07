@@ -11,6 +11,7 @@
 #' @importFrom dplyr select
 #' @importFrom glue glue_collapse
 #' @importFrom lubridate as.Date
+#' @importFrom lubridate wday
 #' @importFrom lubridate weeks
 #' @importFrom purrr map2
 ## usethis namespace: end

@@ -15,7 +15,7 @@ create_class(start_date, sessions, biweekly = FALSE)
 \item{biweekly}{(bool) weekly or bi-weekly classes Default = FALSE}
 }
 \value{
-tibble containing start_date, end_date, exclusions
+tibble containing end_date, exclusions
 }
 \description{
 create_class

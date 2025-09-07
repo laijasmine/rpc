@@ -10,7 +10,7 @@ test_that("class dates correct", {
   wednesday <- create_class("2025-09-17", 9)
   expect_equal(wednesday$end_date, as.Date("2025-11-12"))
   expect_equal(wednesday$exclusions, NA)
-  
+
   saturday <- create_class("2025-09-20", 9)
   expect_equal(saturday$end_date, as.Date("2025-11-15"))
   expect_equal(saturday$exclusions, NA)
@@ -25,7 +25,8 @@ test_that("class dates correct", {
 })
 
 test_that("pick up date is correct", {
-  expect_equal(pick_up_date(as.Date("2025-11-17")), 
-  c(as.Date("2025-12-06"), as.Date("2025-12-07")))
+  expect_equal(
+    pick_up_date(as.Date("2025-11-17")),
+    c(as.Date("2025-12-06"), as.Date("2025-12-07"))
+  )
 })
-
