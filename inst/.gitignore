@@ -1,1 +1,3 @@
 /.quarto/
+*_template.qmd
+*.pdf
