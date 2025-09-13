@@ -2,14 +2,22 @@ library(dplyr)
 library(googlesheets4)
 library(glue)
 library(tidyr)
-# googlesheets4::gs4_auth()
+library(purrr)
+library(quarto)
+library(rpc)
+library(lubridate)
 
 # Variables
+year <- 2025
+session <- "winter"
+
+# Class info
+class_schedule <- get_class_schedule()
+instructors <- unique(class_schedule$instructor)
+
 # test sheet
 volunteer_sheet <- "https://docs.google.com/spreadsheets/d/1iFxPH5qV7jh8YYKW2_WpNnq-PtmgAx-r3hDk5WRkOVc/edit?gid=0#gid=0"
-session <- "Winter 2026"
-
-class_schedule <- get_class_schedule()
+session_yr <- glue("{session} {year}")
 
 # Class Rep
 volunteer_sign_up <- class_schedule |>
@@ -42,60 +50,60 @@ ssid <- as_sheets_id(volunteer_sheet)
 sheet_write(
   bind_rows(volunteer_sign_up, cleanup, pickup),
   ss = ssid,
-  sheet = session
+  sheet = session_yr
 )
 
-## Contracts
-library(purrr)
-library(quarto)
-library(rpc)
-library(glue)
+## Contracts per instructor
+for (i in instructors) {
+  instructor_classes <- class_schedule |>
+    filter(instructor == {{ i }}, class_type == "public") |>
+    mutate(exclusions = ifelse(is.na(exclusions), "None", exclusions)) |>
+    select(-class_type, -instructor, -cost)
 
-year         <- 2025
-session      <- "winter"
-hourly_rate  <- 36
-class_length <- 3
-class_prep   <- 3
-class_schedule <- get_class_schedule()
-instructors <- unique(class_schedule$instructor)
+  quarto_render(
+    input = glue("{getwd()}/inst/contract_template.qmd"),
+    output_file = glue(
+      "{year}_{session}_public_contract_invoice_{i}.pdf"
+    ),
+    output_format = "pdf",
+    execute_dir = getwd(),
+    execute_params = list(
+      instructor = i,
+      day = instructor_classes$day,
+      sessions = instructor_classes$sessions,
+      class_time = instructor_classes$class_time,
+      start_date = as.character(instructor_classes$start_date),
+      end_date = as.character(instructor_classes$end_date),
+      exclusions = instructor_classes$exclusions,
+      course_description = "Wheel Throwing and Hand Building - Beginner and Intermediate Level"
+    )
+  )
+}
 
-# per instructor
-i <- "David Liu"
-instructor_classes <- class_schedule |>
-  filter(instructor == {{ i }}, class_type == "public") |>
+#member class
+member_class <- class_schedule |>
+  filter(class_type == "member")
+member_instructor <- unique(member_class$instructor)
+
+instructor_classes <- member_class |>
+  mutate(exclusions = ifelse(is.na(exclusions), "None", exclusions)) |>
   select(-class_type, -instructor, -cost)
-
-number_of_courses <- NROW(instructor_classes)
-kiln <- ifelse(
-  i == "David Liu",
-  "+ 2 hours kiln loading per course",
-  ""
-)
-kiln_hours <- ifelse(i == "David Liu", 2, 0) * number_of_courses
-
-class_prep <- class_prep_hours * number_of_courses
-total_sessions <- sum(as.numeric(instructor_classes$sessions))
-total_class_time <- (class_length * total_sessions) +
-  class_prep +
-  kiln_hours
-total_contract_amount <- hourly_rate * total_class_time
 
 quarto_render(
   input = glue("{getwd()}/inst/contract_template.qmd"),
-  output_file = glue("{year}_{session}_{i}.pdf"),
+  output_file = glue(
+    "{year}_{session}_member_contract_invoice_{member_instructor}.pdf"
+  ),
   output_format = "pdf",
   execute_dir = getwd(),
   execute_params = list(
-    instructor = i,
+    instructor = member_instructor,
     day = instructor_classes$day,
     sessions = instructor_classes$sessions,
     class_time = instructor_classes$class_time,
     start_date = as.character(instructor_classes$start_date),
-    end_date = as.character(instructor_classes$end_date) #,
-    #exclusions = instructor_classes$exclusions,
-    class_prep = class_prep,
-    total_sessions = total_sessions,
-    total_class_time = total_class_time,
-    total_contract_amount = total_contract_amount
+    end_date = as.character(instructor_classes$end_date),
+    exclusions = instructor_classes$exclusions,
+    course_description = "Member Intermediate Classes"
   )
 )
