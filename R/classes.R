@@ -39,12 +39,14 @@ create_class <- function(start_date, sessions, biweekly = FALSE) {
 #'
 #' @export
 #' @examples
-get_instructors <- function() {
+get_instructors <- function(sheet) {
   # googlesheets4::gs4_auth()
   ssid <- googlesheets4::as_sheets_id(
-    "https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g"
+    "https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g/edit?gid=0#gid=0"
+    # classes documents
+    #"https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
   )
-  googlesheets4::read_sheet(ssid, col_types = "ccccddD")
+  googlesheets4::read_sheet(ssid, sheet = sheet, col_types = "ccccddD")
 }
 
 #' get_class_schedule
@@ -55,8 +57,8 @@ get_instructors <- function() {
 #'
 #' @export
 #' @examples get_class_schedule("David Liu")
-get_class_schedule <- function(instructor = NULL) {
-  instructor_schedule <- get_instructors()
+get_class_schedule <- function(instructor = NULL, sheet) {
+  instructor_schedule <- get_instructors(sheet)
 
   if (!is.null(instructor)) {
     instructor_schedule <- instructor_schedule |>

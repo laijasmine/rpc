@@ -9,10 +9,10 @@ library(lubridate)
 
 # Variables
 year <- 2025
-session <- "winter"
+session <- "Winter"
 
 # Class info
-class_schedule <- get_class_schedule()
+class_schedule <- get_class_schedule(sheet = glue("{year} {session}"))
 instructors <- unique(class_schedule$instructor)
 
 # test sheet
