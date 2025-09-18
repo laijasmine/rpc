@@ -10,6 +10,17 @@
 #' @examples
 #' @export
 create_class <- function(start_date, sessions, biweekly = FALSE) {
+  classes <- get_classes(start_date, sessions, biweekly)
+  overlap_dates <- get_exclusions(classes)
+
+  tibble::tibble(
+    end_date = classes[length(classes)],
+    exclusions = overlap_dates
+  )
+}
+
+#' get classes vector
+get_classes <- function(start_date, sessions, biweekly) {
   start_date <- as.Date(start_date)
   sessions <- sessions - 1 # not including start date
   class_interval <- weeks(1:sessions)
@@ -19,18 +30,29 @@ create_class <- function(start_date, sessions, biweekly = FALSE) {
 
   classes <- start_date + class_interval
 
-  overlap_dates <- NA
   if (any(.holidays %in% classes)) {
     overlap_dates <- .holidays[.holidays %in% classes]
     additional_classes <- sessions + length(overlap_dates)
-    classes <- start_date + weeks(1:additional_classes)
-    overlap_dates <- glue_collapse(overlap_dates, sep = ", ")
+    # TODO fix this could be simplified
+    classes <- c(start_date, (start_date + weeks(1:additional_classes)))
+    classes <- classes[-which(classes %in% .holidays)]
   }
 
-  tibble::tibble(
-    end_date = classes[length(classes)],
-    exclusions = overlap_dates
-  )
+  classes
+}
+
+# get exclusion dates
+get_exclusions <- function(classes) {
+  overlap_dates <- NA
+
+  if (any(.holidays %in% classes)) {
+    overlap_dates <- glue_collapse(
+      .holidays[.holidays %in% classes],
+      sep = ", "
+    )
+  }
+
+  overlap_dates
 }
 
 #' get_instructors
@@ -42,9 +64,9 @@ create_class <- function(start_date, sessions, biweekly = FALSE) {
 get_instructors <- function(sheet) {
   # googlesheets4::gs4_auth()
   ssid <- googlesheets4::as_sheets_id(
-    "https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g/edit?gid=0#gid=0"
+    #"https://docs.google.com/spreadsheets/d/1ws1-H2vXkpDJXjL6v6j6azvW7dGJzsIk6MUK6z5dB2g/edit?gid=0#gid=0"
     # classes documents
-    #"https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
+    "https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
   )
   googlesheets4::read_sheet(ssid, sheet = sheet, col_types = "ccccddD")
 }
@@ -77,4 +99,30 @@ pick_up_date <- function(last_class) {
   sat <- last_class + (7 - wday(last_class)) + weeks(2)
 
   c(sat, (sat + days()))
+}
+
+
+#' Subject (Required) The name of the event
+#' Start Date (Required) The first day of the event
+#' Example: 05 / 30 / 2020
+#' Start Time - The time the event begins
+#' Example: 10:00 AM
+#' End Date The last day of the event
+#' Example: 05 / 30 / 2020
+#' End Time
+create_calendar_event <- function(class_schedule) {
+  class_schedule |>
+    mutate(
+      Subject = glue("{day} {class_type} class"),
+      class_dates = get_classes(start_date, sessions, TRUE)
+    ) |>
+    tidyr::separate_wider_delim(
+      class_time,
+      delim = "-",
+      names = c("Start Time", "End Time")
+    ) |>
+    rename_with(~ stringr::str_replace(.x, "_", " ")) |>
+    rename_with(stringr::str_to_title) |>
+    select(Subject, `Start Time`, `End Time`, `Start Date`, `End Date`) #|>
+  #readr::write_csv("test_gc.csv")
 }

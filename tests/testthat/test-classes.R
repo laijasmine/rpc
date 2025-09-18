@@ -30,3 +30,14 @@ test_that("pick up date is correct", {
     c(as.Date("2025-12-06"), as.Date("2025-12-07"))
   )
 })
+
+test_that("calendar import is generated", {
+  class_schedule <- get_class_schedule(sheet = "2025 Fall")
+  calendar_df <- create_calendar_event(class_schedule)
+
+  expect_equal(NROW(calendar_df), 75)
+  expect_equal(
+    names(calendar_df),
+    c("Subject", "Start Date", "Start Time", "End Time")
+  )
+})
