@@ -4,7 +4,7 @@
 \alias{get_instructors}
 \title{get_instructors}
 \usage{
-get_instructors()
+get_instructors(sheet)
 }
 \value{
 data.frame

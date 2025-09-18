@@ -4,7 +4,7 @@
 \alias{get_class_schedule}
 \title{get_class_schedule}
 \usage{
-get_class_schedule(instructor = NULL)
+get_class_schedule(instructor = NULL, sheet)
 }
 \arguments{
 \item{instructor}{(chr) name of instructor}

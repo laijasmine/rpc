@@ -91,14 +91,14 @@ get_class_schedule <- function(instructor = NULL, sheet) {
     mutate(biweekly = ifelse(class_type == "member", TRUE, FALSE)) |>
     rowwise() |>
     mutate(class = create_class(start_date, sessions, biweekly)) |>
-    unnest(class) |>
+    tidyr::unnest(class) |>
     select(-biweekly)
 }
 
 pick_up_date <- function(last_class) {
   sat <- last_class + (7 - wday(last_class)) + weeks(2)
 
-  c(sat, (sat + days()))
+  c(sat, (sat + lubridate::days()))
 }
 
 
@@ -113,7 +113,7 @@ pick_up_date <- function(last_class) {
 create_calendar_event <- function(class_schedule) {
   class_schedule |>
     mutate(
-      Subject = glue("{day} {class_type} class"),
+      Subject = glue::glue("{day} {class_type} class"),
       class_dates = get_classes(start_date, sessions, TRUE)
     ) |>
     tidyr::separate_wider_delim(
@@ -121,8 +121,8 @@ create_calendar_event <- function(class_schedule) {
       delim = "-",
       names = c("Start Time", "End Time")
     ) |>
-    rename_with(~ stringr::str_replace(.x, "_", " ")) |>
-    rename_with(stringr::str_to_title) |>
+    dplyr::rename_with(~ stringr::str_replace(.x, "_", " ")) |>
+    dplyr::rename_with(stringr::str_to_title) |>
     select(Subject, `Start Time`, `End Time`, `Start Date`, `End Date`) #|>
   #readr::write_csv("test_gc.csv")
 }
