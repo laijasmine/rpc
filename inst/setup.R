@@ -8,18 +8,27 @@ library(rpc)
 library(lubridate)
 
 # Variables
-year <- 2025
+year <- 2026
 session <- "Winter"
+yr_session <- glue("{year} {session}")
 
 # Class info
-class_schedule <- get_class_schedule(sheet = glue("{year} {session}"))
+class_schedule <- get_class_schedule(sheet = yr_session)
 instructors <- unique(class_schedule$instructor)
 
-# test sheet
-volunteer_sheet <- "https://docs.google.com/spreadsheets/d/1iFxPH5qV7jh8YYKW2_WpNnq-PtmgAx-r3hDk5WRkOVc/edit?gid=0#gid=0"
-session_yr <- glue("{session} {year}")
+# Update Draft Class Schedule
+draft_class <- "https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
+ssid <- as_sheets_id(draft_class)
+sheet_write(
+  class_schedule,
+  ss = ssid,
+  sheet = yr_session
+)
 
-# Class Rep
+# Task sheet
+volunteer_sheet <- "https://docs.google.com/spreadsheets/d/1UefO9aacicHOQf_kV3QtGTZJ5e-aqxDNynw5IvIEWfg/edit?gid=1788504644#gid=1788504644"
+
+# Class Tasks
 volunteer_sign_up <- class_schedule |>
   mutate(
     Volunteer = ifelse(
@@ -50,7 +59,7 @@ ssid <- as_sheets_id(volunteer_sheet)
 sheet_write(
   bind_rows(volunteer_sign_up, cleanup, pickup),
   ss = ssid,
-  sheet = session_yr
+  sheet = glue("{yr_session} Classes")
 )
 
 ## Contracts per instructor

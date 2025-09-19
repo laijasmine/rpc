@@ -12,7 +12,7 @@
 create_class <- function(start_date, sessions, biweekly = FALSE) {
   classes <- get_classes(start_date, sessions, biweekly)
   overlap_dates <- get_exclusions(classes)
-
+  # TODO Fix biweekly schedule skips
   tibble::tibble(
     end_date = classes[length(classes)],
     exclusions = overlap_dates
@@ -35,7 +35,7 @@ get_classes <- function(start_date, sessions, biweekly) {
     additional_classes <- sessions + length(overlap_dates)
     # TODO fix this could be simplified
     classes <- c(start_date, (start_date + weeks(1:additional_classes)))
-    classes <- classes[-which(classes %in% .holidays)]
+    #classes <- classes[-which(classes %in% .holidays)]
   }
 
   classes

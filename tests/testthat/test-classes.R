@@ -22,6 +22,10 @@ test_that("class dates correct", {
   member_fri <- create_class("2025-09-19", 6, TRUE)
   expect_equal(member_fri$end_date, as.Date("2025-11-28"))
   expect_equal(member_fri$exclusions, NA)
+
+  biweekly_fri <- create_class("2026-01-05", 6, TRUE)
+  expect_equal(member_fri$end_date, as.Date("2025-03-23"))
+  expect_equal(member_fri$exclusions, "2025-02-16")
 })
 
 test_that("pick up date is correct", {
