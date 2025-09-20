@@ -68,7 +68,7 @@ get_instructors <- function(sheet) {
     # classes documents
     "https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
   )
-  googlesheets4::read_sheet(ssid, sheet = sheet, col_types = "ccccddD")
+  googlesheets4::read_sheet(ssid, sheet = sheet, col_types = "ccccddDDD")
 }
 
 #' get_class_schedule
