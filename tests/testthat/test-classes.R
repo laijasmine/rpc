@@ -39,9 +39,9 @@ test_that("calendar import is generated", {
   class_schedule <- get_class_schedule(sheet = "2025 Fall")
   calendar_df <- create_calendar_event(class_schedule)
 
-  #expect_equal(NROW(calendar_df), 75)
-  #expect_equal(
-  #  names(calendar_df),
-  #  c("Subject", "Start Date", "Start Time", "End Time")
-  #)
+  expect_equal(NROW(calendar_df), 75)
+  expect_equal(
+    names(calendar_df),
+    c("Subject", "Start Time", "End Time", "Start Date")
+  )
 })

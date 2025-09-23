@@ -22,20 +22,33 @@ create_class <- function(start_date, sessions, biweekly = FALSE) {
 #' get classes vector
 get_classes <- function(start_date, sessions, biweekly) {
   start_date <- as.Date(start_date)
-  sessions <- sessions - 1 # not including start date
-  class_interval <- weeks(1:sessions)
+  class_interval <- "weeks"
+  sessions <- sessions - 1
+
   if (biweekly) {
-    class_interval <- class_interval * 2
+    sessions <- sessions * 2
+    class_interval <- "2 weeks"
   }
 
-  classes <- start_date + class_interval
+  classes <- seq(
+    start_date,
+    start_date + weeks(sessions),
+    by = class_interval
+  )
 
   if (any(.holidays %in% classes)) {
     overlap_dates <- .holidays[.holidays %in% classes]
     additional_classes <- sessions + length(overlap_dates)
-    # TODO fix this could be simplified
-    classes <- c(start_date, (start_date + weeks(1:additional_classes)))
-    #classes <- classes[-which(classes %in% .holidays)]
+
+    # extend the classes the additional week(s)
+    classes <- seq(
+      start_date,
+      start_date + weeks(additional_classes),
+      by = class_interval
+    )
+
+    # drop overlap classes
+    classes <- classes[-which(classes %in% overlap_dates)]
   }
 
   classes
@@ -68,7 +81,7 @@ get_instructors <- function(sheet) {
     # classes documents
     "https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
   )
-  googlesheets4::read_sheet(ssid, sheet = sheet, col_types = "ccccddDDD")
+  googlesheets4::read_sheet(ssid, sheet = sheet, col_types = "ccccddD--")
 }
 
 #' get_class_schedule
@@ -111,11 +124,16 @@ pick_up_date <- function(last_class) {
 #' Example: 05 / 30 / 2020
 #' End Time
 create_calendar_event <- function(class_schedule) {
-  class_schedule |>
+  schedule <- class_schedule |>
     mutate(
       Subject = glue::glue("{day} {class_type} class"),
-      class_dates = get_classes(start_date, sessions, TRUE)
+      biweekly = ifelse(class_type == "member", TRUE, FALSE)
     ) |>
+    dplyr::rowwise() |>
+    mutate(
+      Weeks = purrr::pmap(list(start_date, sessions, biweekly), get_classes)
+    ) |>
+    tidyr::unnest(Weeks) |>
     tidyr::separate_wider_delim(
       class_time,
       delim = "-",
@@ -123,6 +141,6 @@ create_calendar_event <- function(class_schedule) {
     ) |>
     dplyr::rename_with(~ stringr::str_replace(.x, "_", " ")) |>
     dplyr::rename_with(stringr::str_to_title) |>
-    select(Subject, `Start Time`, `End Time`, `Start Date`, `End Date`) #|>
-  #readr::write_csv("test_gc.csv")
+    select(Subject, `Start Time`, `End Time`, `Start Date` = Weeks) |>
+    mutate(dplyr::across(tidyselect::everything(), trimws, which = "both"))
 }
