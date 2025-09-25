@@ -69,7 +69,7 @@
 <p>Then use the generated class schedule and format it into a valid dataframe for Google Calendar</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">class_schedule</span> <span class="op">&lt;-</span> <span class="fu">rpc</span><span class="fu">::</span><span class="fu"><a href="reference/get_class_schedule.html">get_class_schedule</a></span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"2025 Fall"</span><span class="op">)</span></span>
-<span><span class="va">calendar_df</span> <span class="op">&lt;-</span> <span class="fu">rpc</span><span class="fu">::</span><span class="fu"><a href="reference/create_calendar_event.html">create_calendar_event</a></span><span class="op">(</span><span class="va">class_schedule</span><span class="op">)</span></span>
+<span><span class="va">calendar_df</span> <span class="op">&lt;-</span> <span class="fu">rpc</span><span class="fu">::</span><span class="fu"><a href="reference/create_calendar_events.html">create_calendar_events</a></span><span class="op">(</span><span class="va">class_schedule</span><span class="op">)</span></span>
 <span><span class="va">calendar_df</span></span>
 <span><span class="co">#&gt; # A tibble: 75 × 4</span></span>
 <span><span class="co">#&gt;    Subject              `Start Time` `End Time` `Start Date`</span></span>
