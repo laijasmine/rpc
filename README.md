@@ -11,7 +11,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/rpc)](https://CRAN.R-project.org/package=rpc)
 <!-- badges: end -->
 
-The goal of rpc is to …
+Helper functions to work assist routine class scheduling tasks.
 
 ## Installation
 
@@ -23,25 +23,42 @@ You can install the development version of rpc from
 pak::pak("laijasmine/rpc")
 ```
 
-## Update Class Information Example
+## Generate class information
+
+Provide a start date and number of sessions to generate a draft
+schedule:
 
 ``` r
-#rpc::create_class("2025-09-15", 9)
+rpc::get_classes("2025-09-15", 9, TRUE)
+#> [1] "2025-09-15" "2025-09-29" "2025-10-20" "2025-11-03" "2025-11-17"
+#> [6] "2025-12-01" "2025-12-15" "2025-12-29" "2026-01-12"
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+Then use the generated class schedule and format it into a valid
+dataframe for Google Calendar
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+class_schedule <- rpc::get_class_schedule(sheet = "2025 Fall")
+calendar_df <- rpc::create_calendar_event(class_schedule)
+calendar_df
+#> # A tibble: 75 × 4
+#>    Subject              `Start Time` `End Time` `Start Date`
+#>    <glue>               <chr>        <chr>      <chr>       
+#>  1 Monday public class  6:00 PM      9:00 PM    2025-09-15  
+#>  2 Monday public class  6:00 PM      9:00 PM    2025-09-22  
+#>  3 Monday public class  6:00 PM      9:00 PM    2025-09-29  
+#>  4 Monday public class  6:00 PM      9:00 PM    2025-10-06  
+#>  5 Monday public class  6:00 PM      9:00 PM    2025-10-20  
+#>  6 Monday public class  6:00 PM      9:00 PM    2025-10-27  
+#>  7 Monday public class  6:00 PM      9:00 PM    2025-11-03  
+#>  8 Monday public class  6:00 PM      9:00 PM    2025-11-10  
+#>  9 Monday public class  6:00 PM      9:00 PM    2025-11-17  
+#> 10 Tuesday public class 10:00 AM     1:00 PM    2025-09-16  
+#> # ℹ 65 more rows
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+Upload the saved csv file to Google:
+
+``` r
+readr::write_csv(calendar_df, tempfile())
+```

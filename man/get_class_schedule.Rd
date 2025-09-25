@@ -18,5 +18,5 @@ tibble
 get_class_schedule
 }
 \examples{
-get_class_schedule("David Liu", sheet = "2026 Winter")
+\dontrun{get_class_schedule("First Last", sheet = "2026 Winter")}
 }
