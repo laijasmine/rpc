@@ -8,6 +8,8 @@ get_class_schedule(instructor = NULL, sheet)
 }
 \arguments{
 \item{instructor}{(chr) name of instructor}
+
+\item{sheet}{(str) name of sheet to use}
 }
 \value{
 tibble
@@ -16,5 +18,5 @@ tibble
 get_class_schedule
 }
 \examples{
-get_class_schedule("David Liu")
+get_class_schedule("David Liu", sheet = "2026 Winter")
 }

@@ -8,6 +8,13 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://laijasmine.github.io/rpc/}
+}
+
+}
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com}
 

@@ -4,7 +4,14 @@
 \alias{get_classes}
 \title{get classes vector}
 \usage{
-get_classes(start_date, sessions, biweekly)
+get_classes(start_date, sessions, class_frequency)
+}
+\arguments{
+\item{start_date}{(chr) in the format of YYYY-MM-DD}
+
+\item{sessions}{(int) number of sessions}
+
+\item{class_frequency}{(bool) frequency of classes Default = FALSE}
 }
 \description{
 get classes vector

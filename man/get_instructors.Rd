@@ -7,7 +7,7 @@
 get_instructors(sheet)
 }
 \value{
-data.frame
+data.frame class schedule dataframe
 }
 \description{
 get_instructors

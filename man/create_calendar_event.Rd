@@ -2,18 +2,22 @@
 % Please edit documentation in R/classes.R
 \name{create_calendar_event}
 \alias{create_calendar_event}
-\title{Subject (Required) The name of the event
-Start Date (Required) The first day of the event
-Example: 05 / 30 / 2020
-Start Time - The time the event begins
-Example: 10:00 AM
-End Date The last day of the event
-Example: 05 / 30 / 2020
-End Time}
+\title{create_calendar_event}
 \usage{
 create_calendar_event(class_schedule)
 }
+\arguments{
+\item{class_schedule}{(dataframe) class schedule table}
+}
+\value{
+google calendar import compatible data.frame
+}
 \description{
+This generates a dataframe that conforms to the google calendar import requirements.
+The dataframe can be saved as a csv then imported into the desired calendar.
+}
+\details{
+The import accepted columns:
 Subject (Required) The name of the event
 Start Date (Required) The first day of the event
 Example: 05 / 30 / 2020
@@ -22,4 +26,9 @@ Example: 10:00 AM
 End Date The last day of the event
 Example: 05 / 30 / 2020
 End Time
+}
+\examples{
+class_schedule <- get_class_schedule(sheet = "2025 Fall")
+calendar_df <- create_calendar_event(class_schedule)
+#readr::write_csv(calendar_df, tempfile())
 }

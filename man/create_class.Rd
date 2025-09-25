@@ -5,14 +5,14 @@
 \title{create_class
 Given a start date create class schedule}
 \usage{
-create_class(start_date, sessions, biweekly = FALSE)
+create_class(start_date, sessions, class_frequency = FALSE)
 }
 \arguments{
 \item{start_date}{(chr) in the format of YYYY-MM-DD}
 
 \item{sessions}{(int) number of sessions}
 
-\item{biweekly}{(bool) weekly or bi-weekly classes Default = FALSE}
+\item{class_frequency}{(bool) frequency of classes Default = FALSE}
 }
 \value{
 tibble containing end_date, exclusions
