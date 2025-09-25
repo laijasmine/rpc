@@ -4,14 +4,14 @@
 \alias{get_exclusions}
 \title{get exclusion dates}
 \usage{
-get_exclusions(start_date, sessions, class_frequency)
+get_exclusions(start_date, sessions, class_frequency = "weekly")
 }
 \arguments{
 \item{start_date}{(date) start date}
 
 \item{sessions}{(integer) number of sessions}
 
-\item{class_frequency}{(bool) if the classes happen class_frequency}
+\item{class_frequency}{(str) frequency of classes, Options = "weekly", "biweekly", Default = "weekly"}
 }
 \description{
 get exclusion dates

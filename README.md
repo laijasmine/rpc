@@ -39,7 +39,7 @@ dataframe for Google Calendar
 
 ``` r
 class_schedule <- rpc::get_class_schedule(sheet = "2025 Fall")
-calendar_df <- rpc::create_calendar_event(class_schedule)
+calendar_df <- rpc::create_calendar_events(class_schedule)
 calendar_df
 #> # A tibble: 75 × 4
 #>    Subject              `Start Time` `End Time` `Start Date`

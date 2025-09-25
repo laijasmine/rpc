@@ -15,29 +15,29 @@ test_that("class dates correct", {
   expect_equal(saturday$end_date, as.Date("2025-11-15"))
   expect_equal(saturday$exclusions, NA)
 
-  member_mon <- create_class("2025-09-22", 6, TRUE)
+  member_mon <- create_class("2025-09-22", 6, "biweekly")
   expect_equal(member_mon$end_date, as.Date("2025-12-01"))
   expect_equal(member_mon$exclusions, NA)
 
-  member_fri <- create_class("2025-09-19", 6, TRUE)
+  member_fri <- create_class("2025-09-19", 6, "biweekly")
   expect_equal(member_fri$end_date, as.Date("2025-11-28"))
   expect_equal(member_fri$exclusions, NA)
 
-  biweekly_mon <- create_class("2026-01-05", 6, TRUE)
+  biweekly_mon <- create_class("2026-01-05", 6, "biweekly")
   expect_equal(biweekly_mon$end_date, as.Date("2026-03-23"))
   expect_equal(biweekly_mon$exclusions, "2026-02-16")
 })
 
 test_that("pick up date is correct", {
   expect_equal(
-    pick_up_date(as.Date("2025-11-17")),
+    get_pick_up_date(as.Date("2025-11-17")),
     c(as.Date("2025-12-06"), as.Date("2025-12-07"))
   )
 })
 
 test_that("calendar import is generated", {
   class_schedule <- get_class_schedule(sheet = "2025 Fall")
-  calendar_df <- create_calendar_event(class_schedule)
+  calendar_df <- create_calendar_events(class_schedule)
 
   expect_equal(NROW(calendar_df), 75)
   expect_equal(

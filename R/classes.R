@@ -3,13 +3,13 @@
 #'
 #' @param start_date (chr) in the format of YYYY-MM-DD
 #' @param sessions (int) number of sessions
-#' @param class_frequency (bool) frequency of classes Default = FALSE
+#' @param class_frequency (str) frequency of classes, Options = "weekly", "biweekly", Default = "weekly"
 #'
 #' @returns tibble containing end_date, exclusions
 #'
 #' @examples
 #' @export
-create_class <- function(start_date, sessions, class_frequency = FALSE) {
+create_class <- function(start_date, sessions, class_frequency = "weekly") {
   classes <- get_classes(start_date, sessions, class_frequency)
   overlap_dates <- get_exclusions(start_date, sessions, class_frequency)
 
@@ -24,18 +24,18 @@ create_class <- function(start_date, sessions, class_frequency = FALSE) {
 #'
 #' @param start_date (chr) in the format of YYYY-MM-DD
 #' @param sessions (int) number of sessions
-#' @param class_frequency (bool) frequency of classes Default = FALSE
+#' @param class_frequency (str) frequency of classes, Options = "weekly", "biweekly", Default = "weekly"
 #'
 #' @returns
 #'
 #' @export
 #' @examples
-get_classes <- function(start_date, sessions, class_frequency) {
+get_classes <- function(start_date, sessions, class_frequency = "weekly") {
   start_date <- as.Date(start_date)
   class_interval <- "weeks"
   sessions <- sessions - 1
 
-  if (class_frequency) {
+  if (class_frequency == "biweekly") {
     sessions <- sessions * 2
     class_interval <- "2 weeks"
   }
@@ -51,7 +51,7 @@ get_classes <- function(start_date, sessions, class_frequency) {
     additional_classes <- sessions + length(overlap_dates)
 
     # extend the classes the additional week(s)
-    if (class_frequency) {
+    if (class_frequency == "biweekly") {
       before_holiday <- seq(
         start_date,
         overlap_dates - weeks(),
@@ -87,13 +87,13 @@ get_classes <- function(start_date, sessions, class_frequency) {
 #'
 #' @param start_date (date) start date
 #' @param sessions (integer) number of sessions
-#' @param class_frequency (bool) if the classes happen class_frequency
+#' @param class_frequency (str) frequency of classes, Options = "weekly", "biweekly", Default = "weekly"
 #'
 #' @returns
 #'
 #' @export
 #' @examples
-get_exclusions <- function(start_date, sessions, class_frequency) {
+get_exclusions <- function(start_date, sessions, class_frequency = "weekly") {
   overlap_dates <- NA
 
   # get classes
@@ -101,7 +101,7 @@ get_exclusions <- function(start_date, sessions, class_frequency) {
   class_interval <- "weeks"
   sessions <- sessions - 1
 
-  if (class_frequency) {
+  if (class_frequency == "biweekly") {
     sessions <- sessions * 2
     class_interval <- "2 weeks"
   }
@@ -131,7 +131,6 @@ get_exclusions <- function(start_date, sessions, class_frequency) {
 #' @export
 #' @examples
 get_instructors <- function(sheet) {
-  # googlesheets4::gs4_auth()
   ssid <- googlesheets4::as_sheets_id(
     "https://docs.google.com/spreadsheets/d/1vivUrj8WSWI2hHTOlgdWfiHdyTRd0zCEIX9xJnHAf54/edit?gid=0#gid=0"
   )
@@ -159,14 +158,16 @@ get_class_schedule <- function(instructor = NULL, sheet) {
   }
 
   instructor_schedule |>
-    mutate(biweekly = ifelse(class_type == "member", TRUE, FALSE)) |>
+    mutate(
+      class_frequency = ifelse(class_type == "member", "biweekly", "weekly")
+    ) |>
     rowwise() |>
-    mutate(class = create_class(start_date, sessions, biweekly)) |>
+    mutate(class = create_class(start_date, sessions, class_frequency)) |>
     tidyr::unnest(class) |>
-    select(-biweekly)
+    select(-class_frequency)
 }
 
-#' pick_up_date
+#' Public class pick up date
 #' Sets the pick up date 2 weeks after the last public class
 #'
 #' @param last_class the date of the last class
@@ -175,14 +176,14 @@ get_class_schedule <- function(instructor = NULL, sheet) {
 #'
 #' @export
 #' @examples
-pick_up_date <- function(last_class) {
+get_pick_up_date <- function(last_class) {
   sat <- last_class + (7 - wday(last_class)) + weeks(2)
 
   c(sat, (sat + lubridate::days()))
 }
 
 
-#' create_calendar_event
+#' create_calendar_events
 #'
 #' This generates a dataframe that conforms to the google calendar import requirements.
 #' The dataframe can be saved as a csv then imported into the desired calendar.
@@ -204,17 +205,20 @@ pick_up_date <- function(last_class) {
 #' @export
 #' @examples
 #' class_schedule <- get_class_schedule(sheet = "2025 Fall")
-#' calendar_df <- create_calendar_event(class_schedule)
+#' calendar_df <- create_calendar_events(class_schedule)
 #' #readr::write_csv(calendar_df, tempfile())
-create_calendar_event <- function(class_schedule) {
+create_calendar_events <- function(class_schedule) {
   schedule <- class_schedule |>
     mutate(
       Subject = glue::glue("{day} {class_type} class"),
-      biweekly = ifelse(class_type == "member", TRUE, FALSE)
+      class_frequency = ifelse(class_type == "member", "biweekly", "weekly")
     ) |>
     dplyr::rowwise() |>
     mutate(
-      Weeks = purrr::pmap(list(start_date, sessions, biweekly), get_classes)
+      Weeks = purrr::pmap(
+        list(start_date, sessions, class_frequency),
+        get_classes
+      )
     ) |>
     tidyr::unnest(Weeks) |>
     tidyr::separate_wider_delim(

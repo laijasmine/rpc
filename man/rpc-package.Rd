@@ -16,7 +16,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com}
+\strong{Maintainer}: Jasmine Lai \email{jsminelai@gmail.com}
 
 }
 \keyword{internal}

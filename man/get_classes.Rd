@@ -4,14 +4,14 @@
 \alias{get_classes}
 \title{get classes vector}
 \usage{
-get_classes(start_date, sessions, class_frequency)
+get_classes(start_date, sessions, class_frequency = "weekly")
 }
 \arguments{
 \item{start_date}{(chr) in the format of YYYY-MM-DD}
 
 \item{sessions}{(int) number of sessions}
 
-\item{class_frequency}{(bool) frequency of classes Default = FALSE}
+\item{class_frequency}{(str) frequency of classes, Options = "weekly", "biweekly", Default = "weekly"}
 }
 \description{
 get classes vector

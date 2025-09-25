@@ -40,7 +40,7 @@ rpc::get_classes("2025-09-15", 9, TRUE)
 Then use the generated class schedule and format it into a valid dataframe for Google Calendar
 ```{r}
 class_schedule <- rpc::get_class_schedule(sheet = "2025 Fall")
-calendar_df <- rpc::create_calendar_event(class_schedule)
+calendar_df <- rpc::create_calendar_events(class_schedule)
 calendar_df
 ```
 
