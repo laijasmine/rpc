@@ -49,7 +49,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of rpc is to …</p>
+<p>Helper functions to work assist routine class scheduling tasks.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -59,21 +59,35 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"laijasmine/rpc"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="update-class-information-example">Update Class Information Example<a class="anchor" aria-label="anchor" href="#update-class-information-example"></a>
+<h2 id="generate-class-information">Generate class information<a class="anchor" aria-label="anchor" href="#generate-class-information"></a>
 </h2>
+<p>Provide a start date and number of sessions to generate a draft schedule:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#rpc::create_class("2025-09-15", 9)</span></span></code></pre></div>
-<p>What is special about using <code>README.Rmd</code> instead of just <code>README.md</code>? You can include R chunks like so:</p>
+<code class="sourceCode R"><span><span class="fu">rpc</span><span class="fu">::</span><span class="fu"><a href="reference/get_classes.html">get_classes</a></span><span class="op">(</span><span class="st">"2025-09-15"</span>, <span class="fl">9</span>, <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "2025-09-15" "2025-09-29" "2025-10-20" "2025-11-03" "2025-11-17"</span></span>
+<span><span class="co">#&gt; [6] "2025-12-01" "2025-12-15" "2025-12-29" "2026-01-12"</span></span></code></pre></div>
+<p>Then use the generated class schedule and format it into a valid dataframe for Google Calendar</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      speed           dist       </span></span>
-<span><span class="co">#&gt;  Min.   : 4.0   Min.   :  2.00  </span></span>
-<span><span class="co">#&gt;  1st Qu.:12.0   1st Qu.: 26.00  </span></span>
-<span><span class="co">#&gt;  Median :15.0   Median : 36.00  </span></span>
-<span><span class="co">#&gt;  Mean   :15.4   Mean   : 42.98  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  </span></span>
-<span><span class="co">#&gt;  Max.   :25.0   Max.   :120.00</span></span></code></pre></div>
-<p>You’ll still need to render <code>README.Rmd</code> regularly, to keep <code>README.md</code> up-to-date. <code>devtools::build_readme()</code> is handy for this.</p>
+<code class="sourceCode R"><span><span class="va">class_schedule</span> <span class="op">&lt;-</span> <span class="fu">rpc</span><span class="fu">::</span><span class="fu"><a href="reference/get_class_schedule.html">get_class_schedule</a></span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"2025 Fall"</span><span class="op">)</span></span>
+<span><span class="va">calendar_df</span> <span class="op">&lt;-</span> <span class="fu">rpc</span><span class="fu">::</span><span class="fu"><a href="reference/create_calendar_event.html">create_calendar_event</a></span><span class="op">(</span><span class="va">class_schedule</span><span class="op">)</span></span>
+<span><span class="va">calendar_df</span></span>
+<span><span class="co">#&gt; # A tibble: 75 × 4</span></span>
+<span><span class="co">#&gt;    Subject              `Start Time` `End Time` `Start Date`</span></span>
+<span><span class="co">#&gt;    &lt;glue&gt;               &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;       </span></span>
+<span><span class="co">#&gt;  1 Monday public class  6:00 PM      9:00 PM    2025-09-15  </span></span>
+<span><span class="co">#&gt;  2 Monday public class  6:00 PM      9:00 PM    2025-09-22  </span></span>
+<span><span class="co">#&gt;  3 Monday public class  6:00 PM      9:00 PM    2025-09-29  </span></span>
+<span><span class="co">#&gt;  4 Monday public class  6:00 PM      9:00 PM    2025-10-06  </span></span>
+<span><span class="co">#&gt;  5 Monday public class  6:00 PM      9:00 PM    2025-10-20  </span></span>
+<span><span class="co">#&gt;  6 Monday public class  6:00 PM      9:00 PM    2025-10-27  </span></span>
+<span><span class="co">#&gt;  7 Monday public class  6:00 PM      9:00 PM    2025-11-03  </span></span>
+<span><span class="co">#&gt;  8 Monday public class  6:00 PM      9:00 PM    2025-11-10  </span></span>
+<span><span class="co">#&gt;  9 Monday public class  6:00 PM      9:00 PM    2025-11-17  </span></span>
+<span><span class="co">#&gt; 10 Tuesday public class 10:00 AM     1:00 PM    2025-09-16  </span></span>
+<span><span class="co">#&gt; # ℹ 65 more rows</span></span></code></pre></div>
+<p>Upload the saved csv file to Google:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">readr</span><span class="fu">::</span><span class="fu">write_csv</span><span class="op">(</span><span class="va">calendar_df</span>, <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -102,7 +116,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>First Last <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Jasmine Lai <br><small class="roles"> Author, maintainer </small>   </li>
 </ul>
 </div>
 
@@ -119,7 +133,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Jasmine Lai.</p>
 </div>
 
 <div class="pkgdown-footer-right">
