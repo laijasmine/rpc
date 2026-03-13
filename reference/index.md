@@ -2,6 +2,8 @@
 
 ## All functions
 
+- [`calculate_instructor_pay()`](https://laijasmine.github.io/rpc/reference/calculate_instructor_pay.md)
+  : Calculate instructor pay per person per class type
 - [`create_calendar_events()`](https://laijasmine.github.io/rpc/reference/create_calendar_events.md)
   : create_calendar_events
 - [`create_class()`](https://laijasmine.github.io/rpc/reference/create_class.md)
