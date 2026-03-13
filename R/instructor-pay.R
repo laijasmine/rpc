@@ -1,3 +1,14 @@
+#' Calculate instructor pay per person per class type
+#'
+#' @param hourly_rate - hourly pay rate
+#' @param class_type - class type. One of "member" or "public".
+#' @param number_of_courses - number of courses taught by a given instructor
+#' @param instructor - name of instructor
+#'
+#' @returns numeric
+#'
+#' @export
+#' @examples
 calculate_instructor_pay <- function(
   hourly_rate,
   class_type,
